@@ -4,9 +4,9 @@ import com.gdg.restapi.dto.ScoreRequest;
 import com.gdg.restapi.dto.ScoreResponse;
 import com.gdg.restapi.service.PlayService;
 import com.gdg.restapi.service.ScoreService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -29,7 +29,8 @@ public class ScoreController {
 
     // 악보 등록
     @PostMapping
-    public ResponseEntity<ScoreResponse> create(@Valid @RequestBody ScoreRequest request) {
+    public ResponseEntity<ScoreResponse> create(@Validated(ScoreRequest.CreateGroup.class)
+                                                @RequestBody ScoreRequest request) {
         ScoreResponse response = scoreService.create(request);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest() // 클라이언트가 요청을 보낸 주소
                 .path("/{id}") // 주소 맨 뒷줄에 /{id} 추가
@@ -52,7 +53,9 @@ public class ScoreController {
 
     // id로 악보 수정
     @PatchMapping("/{id}")
-    public ResponseEntity<ScoreResponse> update(@PathVariable Long id, @Valid @RequestBody ScoreRequest request) {
+    public ResponseEntity<ScoreResponse> update(@PathVariable Long id,
+                                                @Validated(ScoreRequest.UpdateGroup.class)
+                                                @RequestBody ScoreRequest request) {
         return ResponseEntity.ok(scoreService.update(id, request));
     }
 
