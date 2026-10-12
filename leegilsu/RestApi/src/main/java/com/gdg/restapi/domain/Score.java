@@ -1,21 +1,26 @@
 package com.gdg.restapi.domain;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
+import org.hibernate.validator.constraints.Range;
 
 import java.util.List;
 
 @Getter
 public class Score {
     private final Long id; // 악보 id
+
+    @NotBlank(message = "악보명을 작성해주세요.")
     private String name; // 악보 이름
+
     private String composer; // 작곡가
+
+    @Range(min = 0, max = 127, message = "악기 번호는 0 ~ 127 입니다.")
     private Integer instrument; // 악기
+
     private List<Note> melody; // pitches, duration 저장 리스트
 
     public Score(Long id, String name, String composer, Integer instrument, List<Note> melody) {
-        validateName(name);
-        validateInstrument(instrument);
-
         this.id = id;
         this.name = name;
         this.composer = composer;
@@ -24,11 +29,6 @@ public class Score {
     }
 
     public void update(String name, String composer, Integer instrument, List<Note> melody) {
-        if (name != null) {
-            validateName(name);
-        }
-        validateInstrument(instrument);
-
         if (name != null) {
             this.name = name;
         }
@@ -40,20 +40,6 @@ public class Score {
         }
         if (melody != null) {
             this.melody = List.copyOf(melody); // 불변 리스트로 교체
-        }
-    }
-
-    // 악보명 유효성 검사 (null, 공백 허용X)
-    private void validateName(String name) {
-        if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException("악보명을 작성해주세요.");
-        }
-    }
-
-    // 악기 번호 유효성 검사 (0 ~ 127 범위 벗어남 허용X)
-    private void validateInstrument(Integer instrument) {
-        if (instrument != null && (instrument < 0 || 127 < instrument)) {
-            throw new IllegalArgumentException("악기 번호는 0 ~ 127 입니다.");
         }
     }
 }
